@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: Dovyski/setup-opencv-action@v1.1
+      with:
+        opencv-version: 4.0.0
+        GENERATE_PKGCONFIG: ON
     - uses: egor-tensin/build-boost@v1.4
     - uses: actions/setup-python@v4.6.0
     - name: Compile resize
