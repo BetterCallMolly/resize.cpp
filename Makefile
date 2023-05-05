@@ -19,8 +19,6 @@ SRCS = main.cpp \
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPS_DIR)/, $(SRCS:.cpp=.d))
 
-# SRCS := $(addprefix $(SRCS_DIR)/, $(SRCS))
-
 all: $(NAME)
 
 $(NAME): $(OBJS)
