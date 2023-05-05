@@ -4,7 +4,7 @@ NAME = resize
 # Compile using g++ / opencv4
 CXX = g++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++17 -O2 -g3 -MMD
-LDFLAGS = `pkg-config --libs opencv4` -lboost_program_options
+LDFLAGS = `pkg-config --libs opencv4` -lboost_program_options -lboost_filesystem -lboost_system
 INCLUDES = -Iincludes/ -I/usr/include/opencv4
 
 OBJS_DIR = objs
@@ -12,7 +12,9 @@ DEPS_DIR = deps
 SRCS_DIR = srcs
 
 SRCS = main.cpp \
-		interpret_options.cpp
+		interpret_options.cpp \
+		process_images.cpp \
+		fill_set.cpp \
 
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPS_DIR)/, $(SRCS:.cpp=.d))
