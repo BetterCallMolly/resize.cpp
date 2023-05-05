@@ -98,8 +98,15 @@ _[see OpenCV docs for interpolation methods](https://docs.opencv.org/3.4/da/d54/
 - [OpenCV](https://opencv.org/)
 - [Boost](https://www.boost.org/)
 
-# 📈 Performance
+# 📈 Performances
 
-_Tested on a Ryzen 9 5900X @ 24 threads_
+## resize.cpp
 
-| Images / sec |
+| Threads | N Images | Time (s) | Pixels/s  |
+| ------- | -------- | -------- | --------- |
+| 1       | 2048     | 4.22     | 127220595 |
+| 2       | 2048     | 2.83     | 189707036 |
+| 4       | 2048     | 1.65     | 325376310 |
+| 8       | 2048     | 1.09     | 492542121 |
+| 16      | 2048     | 0.826    | 649799581 |
+| 24      | 2048     | 0.809    | 663000039 |
