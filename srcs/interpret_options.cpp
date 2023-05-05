@@ -1,5 +1,4 @@
 #include "resize.hpp"
-#include <map>
 
 /**
  * @brief Checks if the options are valid
@@ -63,6 +62,22 @@ bool sanity_checks(resize_opts &opts)
         std::cerr << "Warning : height and width will be ignored" << std::endl;
     }
 
+    // check that extensions are valid (jpg, jpeg, png)
+    for (auto &ext : opts.extensions)
+    {
+        if (ext != "jpg" && ext != "jpeg" && ext != "png")
+        {
+            std::cerr << "Invalid extension : " << ext << std::endl;
+            error = true;
+        }
+    }
+
+    // check that there's at least one extension
+    if (opts.extensions.size() == 0)
+    {
+        std::cerr << "Warning : no extension specified, defaulting to jpg, jpeg and png" << std::endl;
+        opts.extensions = {"jpg", "jpeg", "png"};
+    }
     return (!error);
 }
 
@@ -90,17 +105,18 @@ resize_opts interpret_options(po::variables_map &vm)
 {
     resize_opts opts;
 
-    opts.keep = vm.count("keep");
-    opts.progress = !vm.count("no-progress");
-    opts.recursive = vm.count("recursive");
-    opts.verbose = vm.count("verbose");
+    opts.keep = vm["keep"].as<bool>();
+    opts.progress = vm["progress"].as<bool>();
+    opts.recursive = vm["recursive"].as<bool>();
+    opts.verbose = vm["verbose"].as<bool>();
+    opts.delete_fails = vm["delete_fails"].as<bool>();
 
     // Options with default values
     opts.down_interpolation = cv::INTER_AREA;
     opts.up_interpolation = cv::INTER_LINEAR;
     opts.jpeg_quality = 95;
     opts.threads = std::thread::hardware_concurrency();
-    opts.extensions = {".jpg", ".jpeg", ".png"};
+    opts.extensions = {"jpg", "jpeg", "png"};
     opts.output_format = "";
     opts.suffix = "_resized";
 
@@ -149,8 +165,7 @@ resize_opts interpret_options(po::variables_map &vm)
     // Interpret extensions option (if any)
     if (vm.count("extensions"))
     {
-        // TODO: Implement this
-        // opts.extensions = vm["extensions"].as<std::vector<std::string>>();
+        boost::split(opts.extensions, vm["extensions"].as<std::string>(), boost::is_any_of(" "));
     }
 
     // Interpret output format option (if any)
