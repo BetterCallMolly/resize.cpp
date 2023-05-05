@@ -1,18 +1,17 @@
 #include "resize.hpp"
-#include <iostream>
-#include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    po::options_description desc("Usage: " + std::string(argv[0]) + " [OPTION]... [FILE]...");
+    po::options_description desc("Usage: " + std::string(argv[0]) + " [OPTION]... [FILE]... ");
     desc.add_options()
         ("help", "print this help message and exit")
-        ("keep", "keep original files")
-        ("no_progress", "show progress bar")
-        ("recursive", "resize files in subdirectories")
-        ("verbose", "verbose mode")
+        ("keep", po::bool_switch()->default_value(false), "keep original files")
+        ("progress", po::bool_switch()->default_value(true), "show progress bar")
+        ("recursive", po::bool_switch()->default_value(false), "resize files in subdirectories")
+        ("verbose", po::bool_switch()->default_value(false), "verbose mode")
+        ("delete_fails", po::bool_switch()->default_value(true), "delete files that failed to resize")
         ("width", po::value<int>(), "width of the resized image")
         ("height", po::value<int>(),"height of the resized image")
         ("scale", po::value<float>(),"scale of the resized image")
@@ -20,15 +19,23 @@ int main(int argc, char **argv)
         ("up_interpolation", po::value<std::string>(), "interpolation method for upscaling")
         ("jpeg_quality", po::value<int>(), "jpeg quality")
         ("threads", po::value<int>(), "number of threads to use")
-        ("extensions", po::value<std::vector<std::string>>(), "extensions to consider")
+        ("extensions", po::value<std::string>(), "extensions to consider")
         ("output_format", po::value<std::string>(), "output format")
         ("suffix", po::value<std::string>(), "suffix to append to the filename")
+        ("files", po::value<std::vector<std::string>>(), "files to resize")
     ;
+
+    po::positional_options_description p;
+    p.add("files", -1);
 
     po::variables_map vm;
     try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-    } catch (std::exception &e) {
+        po::store(boost::program_options::command_line_parser(argc, argv).
+            options(desc).
+            positional(p).run()
+        , vm);
+        po::notify(vm);
+    } catch (boost::program_options::error &e) {
         std::cerr << "Failed to parse command line: " << e.what() << std::endl;
         return (1);
     }
@@ -49,5 +56,54 @@ int main(int argc, char **argv)
         std::cerr << "Failed to interpret options: " << e.what() << std::endl;
         return (1);
     }
+
+    // we're using sets to just skip duplicates and not do any extra work
+    std::set<std::string> files;
+
+    // print files passed as arguments
+    for (auto &file : vm["files"].as<std::vector<std::string>>())
+    {
+        if (opts.verbose)
+            std::cout << "Processing : " << file << std::endl;
+        fill_set(files, opts, file);
+    }
+
+    size_t total = files.size();
+    if (opts.verbose)
+        std::cout << "Found " << total << " files to process" << std::endl;
+
+    // if we're using only one thread, just process the files
+    if (opts.threads == 1)
+    {
+        for (auto &file : files)
+        {
+            process_image(opts, file);
+            update_progress_bar(total);
+        }
+    }
+    else
+    {
+        std::vector<std::vector<std::string>> chunks;
+        chunks.resize(opts.threads);
+        unsigned int i = 0;
+        for (auto it = files.begin(); it != files.end(); ++it)
+        {
+            chunks[i % opts.threads].push_back(*it);
+            i++;
+        }
+        files.clear(); // clear the set to save memory
+        // process chunks
+        std::vector<std::thread> threads;
+        for (auto &chunk : chunks)
+        {
+            threads.push_back(std::thread(process_chunk, std::ref(opts), std::ref(chunk), std::ref(total)));
+        }
+        for (auto &thread : threads)
+        {
+            thread.join();
+        }
+    }
+    std::cerr << std::endl;
+
     return (0);
 }
