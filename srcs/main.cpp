@@ -4,24 +4,24 @@ namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    po::options_description desc("Usage: " + std::string(argv[0]) + " [OPTION]... [FILE]... ");
+    po::options_description desc("Usage: " + std::string(argv[0]) + " [OPTION]... [FILE / DIRS]... ");
     desc.add_options()
         ("help", "print this help message and exit")
-        ("keep", po::bool_switch()->default_value(false), "keep original files")
-        ("progress", po::bool_switch()->default_value(true), "show progress bar")
-        ("recursive", po::bool_switch()->default_value(false), "resize files in subdirectories")
-        ("verbose", po::bool_switch()->default_value(false), "verbose mode")
-        ("delete_fails", po::bool_switch()->default_value(true), "delete files that failed to resize")
+        ("keep", po::bool_switch()->default_value(false), "keep original files (default: false)")
+        ("progress", po::bool_switch()->default_value(true), "show progress bar (default: true)")
+        ("recursive", po::bool_switch()->default_value(false), "resize files in subdirectories (default: false)")
+        ("verbose", po::bool_switch()->default_value(false), "verbose mode (default: false)")
+        ("delete_fails", po::bool_switch()->default_value(true), "delete files that failed to resize (default: true)")
         ("width", po::value<int>(), "width of the resized image")
         ("height", po::value<int>(),"height of the resized image")
         ("scale", po::value<float>(),"scale of the resized image")
-        ("down_interpolation", po::value<std::string>(), "interpolation method for downscaling")
-        ("up_interpolation", po::value<std::string>(), "interpolation method for upscaling")
-        ("jpeg_quality", po::value<int>(), "jpeg quality")
-        ("threads", po::value<int>(), "number of threads to use")
-        ("extensions", po::value<std::string>(), "extensions to consider")
-        ("output_format", po::value<std::string>(), "output format")
-        ("suffix", po::value<std::string>(), "suffix to append to the filename")
+        ("down_interpolation", po::value<std::string>(), "interpolation method for downscaling (default: INTER_AREA)")
+        ("up_interpolation", po::value<std::string>(), "interpolation method for upscaling (default: INTER_LINEAR)")
+        ("jpeg_quality", po::value<int>(), "jpeg quality (default: 95)")
+        ("threads", po::value<int>(), "number of threads to use (default: all available)")
+        ("extensions", po::value<std::string>(), "extensions to consider (default: jpg jpeg png) (space separated)")
+        ("output_format", po::value<std::string>(), "output format (default: same as input)")
+        ("suffix", po::value<std::string>(), "suffix to append to the filename (default: _resized)")
         ("files", po::value<std::vector<std::string>>(), "files to resize")
     ;
 

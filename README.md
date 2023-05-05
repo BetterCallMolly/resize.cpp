@@ -43,52 +43,24 @@ fd -e jpg -x ./resize --width 512 --height 512
 # 📖 Help
 
 ```
-Usage: resize [options] <file_or_directory>...
-
---help
-    Print this help message and exit
-
---width <width>
-    es
-
---height <height>
-    Height of the resized image
-
---recursive
-    Recursively resize all images in the given path
-
---keep
-    Keep the original image, resized images will have the '_resized' suffix
-
---scale <scale>
-    Scale factor to apply to the image (-w and -h will be ignored)
-
---suffix=<suffix>
-    Suffix to append to the resized image (default: '_resized') (works only with --keep)
-
---verbose
-    Print verbose messages (disables progress bar)
-
---threads <threads>
-    Number of threads to use (default: all threads)
-
---no-progress
-    Disable progress bar
-
---extension <extension>
-    Extension of the images to resize (default: jpg, jpeg, png) (case insensitive) (comma separated)
-
---output-format <format>
-    Output format of the resized image (default: same as input)
-
---up_interpolation <interpolation>
-    Interpolation method to use when upscaling (default: cubic) (case insensitive)
-
---down_interpolation <interpolation>
-    Interpolation method to use when downscaling (default: default: INTER_AREA) (case insensitive)
-
---jpeg-quality <quality>
-    JPEG quality (default: 95)
+Usage: resize [OPTION]... [FILE / DIRS]... :
+  --help                   print this help message and exit
+  --keep                   keep original files (default: false)
+  --progress               show progress bar (default: true)
+  --recursive              resize files in subdirectories (default: false)
+  --verbose                verbose mode (default: false)
+  --delete_fails           delete files that failed to resize (default: true)
+  --width arg              width of the resized image
+  --height arg             height of the resized image
+  --scale arg              scale of the resized image
+  --down_interpolation arg interpolation method for downscaling (default: INTER_AREA)
+  --up_interpolation arg   interpolation method for upscaling (default: INTER_LINEAR)
+  --jpeg_quality arg       jpeg quality (default: 95)
+  --threads arg            number of threads to use (default: all available)
+  --extensions arg         extensions to consider (default: jpg jpeg png) (space separated)
+  --output_format arg      output format (default: same as input)
+  --suffix arg             suffix to append to the filename (default: _resized)
+  --files arg              files to resize
 ```
 
 _[see OpenCV docs for interpolation methods](https://docs.opencv.org/3.4/da/d54/group__imgproc__transform.html#ga5bb5a1fea74ea38e1a5445ca803ff121)_
