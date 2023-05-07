@@ -15,6 +15,7 @@ SRCS = main.cpp \
 		interpret_options.cpp \
 		process_images.cpp \
 		fill_set.cpp \
+		summary.cpp \
 
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 DEPS = $(addprefix $(DEPS_DIR)/, $(SRCS:.cpp=.d))
