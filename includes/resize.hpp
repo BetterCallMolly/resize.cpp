@@ -17,7 +17,9 @@ namespace po = boost::program_options;
 enum class RESIZE_METHOD
 {
     SCALE,
-    HEIGHT_WIDTH
+    HEIGHT_WIDTH,
+    HEIGHT_WIDTH_DYN,
+    MIN_HEIGHT_WIDTH
 };
 
 struct resize_opts
@@ -27,6 +29,8 @@ struct resize_opts
     bool recursive; // Default : false
     bool verbose;   // Default : false
     bool delete_fails; // Default : true
+    bool dry_run; // Default : false
+    bool summary; // Default : false
     cv::InterpolationFlags down_interpolation; // Default : cv::INTER_AREA
     cv::InterpolationFlags up_interpolation;   // Default : cv::INTER_LINEAR
     float scale;      // Compulsory if height and width are not set
@@ -35,8 +39,10 @@ struct resize_opts
     std::string output_format; // Default : "" (same as input)
     std::string suffix;   // Default : "_resized" (keep must be set)
     int threads; // Default : std::thread::hardware_concurrency()
-    int height;  // Compulsory if width is set (scale mustn't be enabled)
-    int width;   // Compulsory if height is set (scale mustn't be enabled)
+    int height;  // scale will override this
+    int width;   // scale will override this
+    int min_height; // compulsory if min_width is set
+    int min_width; // compulsory if min_height is set
     RESIZE_METHOD method;
 };
 
@@ -45,3 +51,4 @@ void process_image(resize_opts &opts, const std::string & path);
 void process_chunk(resize_opts &opts, std::vector<std::string> & files, size_t &total);
 void fill_set(std::set<std::string> &files, resize_opts &options, const std::string &path);
 void update_progress_bar(size_t &total);
+void print_summary(resize_opts &opts, const std::vector<std::string> &paths);

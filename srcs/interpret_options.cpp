@@ -24,6 +24,29 @@ bool sanity_checks(resize_opts &opts)
             error = true;
         }
     }
+    else if (opts.method == RESIZE_METHOD::HEIGHT_WIDTH_DYN)
+    {
+        // No values can be under 0, one has to be 0 and the other has to be > 0
+        if (opts.height < 0 || opts.width < 0)
+        {
+            std::cerr << "Height and width must be positive numbers" << std::endl;
+            error = true;
+        }
+        if (opts.height == 0 && opts.width == 0)
+        {
+            std::cerr << "Height and width can't both be 0" << std::endl;
+            error = true;
+        }
+    }
+    else if (opts.method == RESIZE_METHOD::MIN_HEIGHT_WIDTH)
+    {
+        // check that min_height and min_width are valid
+        if (opts.min_height <= 0 || opts.min_width <= 0)
+        {
+            std::cerr << "min_height and min_width must be positive numbers" << std::endl;
+            error = true;
+        }
+    }
     else
     { // Scale
         if (opts.scale <= 0.0f)
@@ -110,6 +133,11 @@ resize_opts interpret_options(po::variables_map &vm)
     opts.recursive = vm["recursive"].as<bool>();
     opts.verbose = vm["verbose"].as<bool>();
     opts.delete_fails = vm["delete_fails"].as<bool>();
+    opts.dry_run = vm["dry_run"].as<bool>();
+    opts.summary = vm["summary"].as<bool>();
+
+    if (opts.verbose || opts.dry_run)
+        opts.progress = false;
 
     // Options with default values
     opts.down_interpolation = cv::INTER_AREA;
@@ -126,14 +154,27 @@ resize_opts interpret_options(po::variables_map &vm)
         opts.scale = vm["scale"].as<float>();
         opts.method = RESIZE_METHOD::SCALE;
     }
-    else if (vm.count("height") && vm.count("width"))
+    else if (vm.count("height") || vm.count("width"))
     {
-        opts.height = vm["height"].as<int>();
-        opts.width = vm["width"].as<int>();
-        opts.method = RESIZE_METHOD::HEIGHT_WIDTH;
+        if (vm.count("height"))
+        {
+            opts.height = vm["height"].as<int>();
+        }
+        if (vm.count("width"))
+        {
+            opts.width = vm["width"].as<int>();
+        }
+        // HEIGHT_WIDTH if both set, HEIGHT_WIDTH_DYN if only one set
+        opts.method = (vm.count("height") && vm.count("width")) ? RESIZE_METHOD::HEIGHT_WIDTH : RESIZE_METHOD::HEIGHT_WIDTH_DYN;
+    }
+    else if (vm.count("min_height") && vm.count("min_width"))
+    {
+        opts.min_height = vm["min_height"].as<int>();
+        opts.min_width = vm["min_width"].as<int>();
+        opts.method = RESIZE_METHOD::MIN_HEIGHT_WIDTH;
     }
     else
-        throw std::runtime_error("Either scale or height and width must be set");
+        throw std::runtime_error("Either scale or height or width or min_height and min_width must be specified");
 
     // Interpret interpolation options (if any) (lowercase)
     if (vm.count("down_interpolation"))

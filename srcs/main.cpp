@@ -12,8 +12,12 @@ int main(int argc, char **argv)
         ("recursive", po::bool_switch()->default_value(false), "resize files in subdirectories (default: false)")
         ("verbose", po::bool_switch()->default_value(false), "verbose mode (default: false)")
         ("delete_fails", po::bool_switch()->default_value(true), "delete files that failed to resize (default: true)")
+        ("dry_run", po::bool_switch()->default_value(false), "dry run (default: false), just prints what would be done")
+        ("summary", po::bool_switch()->default_value(false), "print details of the resize operation and exits")
         ("width", po::value<int>(), "width of the resized image")
         ("height", po::value<int>(),"height of the resized image")
+        ("min_width", po::value<int>(), "resizes just over the closest width, keeping aspect ratio (min_height must be set)")
+        ("min_height", po::value<int>(), "resizes just over the closest height keeping aspect ratio (min_width must be set)")
         ("scale", po::value<float>(),"scale of the resized image")
         ("down_interpolation", po::value<std::string>(), "interpolation method for downscaling (default: INTER_AREA)")
         ("up_interpolation", po::value<std::string>(), "interpolation method for upscaling (default: INTER_LINEAR)")
@@ -57,6 +61,12 @@ int main(int argc, char **argv)
         return (1);
     }
 
+    if (opts.summary)
+    {
+        print_summary(opts, vm["files"].as<std::vector<std::string>>());
+        return (0);
+    }
+
     // we're using sets to just skip duplicates and not do any extra work
     std::set<std::string> files;
 
@@ -78,7 +88,8 @@ int main(int argc, char **argv)
         for (auto &file : files)
         {
             process_image(opts, file);
-            update_progress_bar(total);
+            if (opts.progress)
+                update_progress_bar(total);
         }
     }
     else
