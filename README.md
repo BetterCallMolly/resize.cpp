@@ -38,14 +38,24 @@ Usage: resize [OPTION]... [FILE / DIRS]... :
   --recursive              resize files in subdirectories (default: false)
   --verbose                verbose mode (default: false)
   --delete_fails           delete files that failed to resize (default: true)
+  --dry_run                dry run (default: false), just prints what would be 
+                           done
+  --summary                print details of the resize operation and exits
   --width arg              width of the resized image
   --height arg             height of the resized image
+  --min_width arg          resizes just over the closest width, keeping aspect 
+                           ratio (min_height must be set)
+  --min_height arg         resizes just over the closest height keeping aspect 
+                           ratio (min_width must be set)
   --scale arg              scale of the resized image
-  --down_interpolation arg interpolation method for downscaling (default: INTER_AREA)
-  --up_interpolation arg   interpolation method for upscaling (default: INTER_LINEAR)
+  --down_interpolation arg interpolation method for downscaling (default: 
+                           INTER_AREA)
+  --up_interpolation arg   interpolation method for upscaling (default: 
+                           INTER_LINEAR)
   --jpeg_quality arg       jpeg quality (default: 95)
   --threads arg            number of threads to use (default: all available)
-  --extensions arg         extensions to consider (default: jpg jpeg png) (space separated)
+  --extensions arg         extensions to consider (default: jpg jpeg png) 
+                           (space separated)
   --output_format arg      output format (default: same as input)
   --suffix arg             suffix to append to the filename (default: _resized)
   --files arg              files to resize
