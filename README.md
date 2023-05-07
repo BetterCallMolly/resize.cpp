@@ -28,18 +28,6 @@ I was tired of writing the same code over and over again to resize images with P
 # Will search for all images in the current directory and resize them to 512x512, overwriting the originals, keeping the same format
 ```
 
-## Using `find`
-
-```bash
-find . -type f -name "*.jpg" -exec ./resize {} --width 512 --height 512 \;
-```
-
-## Using `fd`
-
-```bash
-fd -e jpg -x ./resize --width 512 --height 512
-```
-
 # 📖 Help
 
 ```
