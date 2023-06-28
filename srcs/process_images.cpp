@@ -9,8 +9,7 @@ void update_progress_bar(size_t &total)
     mtx.lock();
     progress++;
     // print a fancy progress bar
-    std::cerr << "\033[2K\r";
-    std::cerr << "[";
+    std::cerr << "\r[";
     for (size_t i = 0; i < 50; i++)
     {
         if (i < (progress * 50) / total)
