@@ -88,7 +88,7 @@ bool sanity_checks(resize_opts &opts)
     // check that extensions are valid (jpg, jpeg, png)
     for (auto &ext : opts.extensions)
     {
-        if (ext != "jpg" && ext != "jpeg" && ext != "png")
+        if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "webp" && ext != "avif")
         {
             std::cerr << "Invalid extension : " << ext << std::endl;
             error = true;
