@@ -73,9 +73,9 @@ bool sanity_checks(resize_opts &opts)
         std::cerr << "Warning : number of threads is greater than the number of cores" << std::endl;
     }
 
-    if (opts.output_format != "" && opts.output_format != "jpg" && opts.output_format != "jpeg" && opts.output_format != "png")
+    if (opts.output_format != "" && opts.output_format != "jpg" && opts.output_format != "jpeg" && opts.output_format != "png" && opts.output_format != "webp" && opts.output_format != "avif")
     {
-        std::cerr << "Invalid output format, possible values are : jpg, jpeg, png" << std::endl;
+        std::cerr << "Invalid output format, possible values are : jpg, jpeg, png, webp, avif" << std::endl;
         error = true;
     }
 
@@ -98,8 +98,8 @@ bool sanity_checks(resize_opts &opts)
     // check that there's at least one extension
     if (opts.extensions.size() == 0)
     {
-        std::cerr << "Warning : no extension specified, defaulting to jpg, jpeg and png" << std::endl;
-        opts.extensions = {"jpg", "jpeg", "png"};
+        std::cerr << "Warning : no extension specified, defaulting to jpg, jpeg, png, webp, avif" << std::endl;
+        opts.extensions = {"jpg", "jpeg", "png", "webp", "avif"};
     }
     return (!error);
 }
@@ -144,7 +144,7 @@ resize_opts interpret_options(po::variables_map &vm)
     opts.up_interpolation = cv::INTER_LINEAR;
     opts.jpeg_quality = 95;
     opts.threads = std::thread::hardware_concurrency();
-    opts.extensions = {"jpg", "jpeg", "png"};
+    opts.extensions = {"jpg", "jpeg", "png", "webp", "avif"};
     opts.output_format = "";
     opts.suffix = "_resized";
 
